@@ -1,0 +1,15 @@
+ 	---
+ 	title: “EDRM 718 Assignment 10”
+ 	author: “Hongxiao Yu”
+ 	date: “21 April 2020”
+ 	Output: “html_notebook”
+ 	---
+
+***
+```{r}
+library(here)
+library(tidyverse)
+project <- read_csv(here("Data", "Johnson Elementary ELA Project.csv"))
+project
+```
+
