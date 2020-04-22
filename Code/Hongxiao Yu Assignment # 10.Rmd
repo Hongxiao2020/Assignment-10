@@ -6,10 +6,93 @@
  	---
 
 ***
+### Q1
 ```{r}
 library(here)
 library(tidyverse)
-project <- read_csv(here("Data", "Johnson Elementary ELA Project.csv"))
-project
+
+# read data
+project <- read_csv(here("Data", "Johnson Elementary ELA Project.csv"),
+                    col_names = c("Room", 
+                                  "Student ID", 
+                                  "Tardies_Absences", 
+                                  "Q1", 
+                                  "Q2", 
+                                  "Q3", 
+                                  "Q4"),
+                    skip = 4)
+# Tidy data
+new.project <- project %>%
+    fill(Room) %>%
+  separate(Tardies_Absences, into = c("Tardies", "Absences"), convert = TRUE)
+
+new.project
+```
+
+
+### Q2
+```{r}
+new.project %>%
+  group_by(Room) %>%
+  summarise(
+    tardies.mean = mean(Tardies, na.rm = TRUE),
+    absence.mean = mean(Absences, na.rm = TRUE),
+    tardies.sd = sd(Tardies, na.rm = TRUE),
+    absence.sd = sd(Absences, na.rm = TRUE),
+    tardies.median = median(Tardies, na.rm = TRUE),
+    absence.median = median(Absences, na.rm = TRUE))
+```
+
+***
+### Q3
+```{r}
+project.long <- new.project %>%
+  gather("Q1", "Q2", "Q3", "Q4",
+         key = "Quarter",
+         value = "Rating") 
+(project.long %>%
+   group_by(Room, Quarter) %>%
+   summarise(sum(is.na(Rating))))
+```
+
+
+***
+### Q4
+```{r}
+plot <- project.long %>%
+  group_by(Room, Quarter) %>%
+  summarize(median.rating = median(Rating, na.rm = TRUE)) %>%
+ ggplot(aes(x = Quarter, y = median.rating, group = Room, na.rm = TRUE)) +
+  geom_line(aes(color = Room)) +
+  labs(x = "Quarter", 
+       y = "Median Quarter Ratings",
+       title = "The Median Rating Trends across the Four Quarters for the Fifth-grade Classes")
+
+plot
+```
+
+
+***
+### Q5
+```{r}
+flight <-read_csv(here("Data", "NYC Flights 2013.csv"))
+
+flight %>%
+  mutate(on_time = (arr_delay <= 0)) %>%
+  filter(dest == "ATL", !is.na(on_time)) %>%
+  ggplot(aes(x = carrier)) + 
+  geom_bar(aes(fill = on_time), position = "fill") +
+  labs(title = "2013 On-Arrivals Flights: from NYC to ATL",
+       x = "Carrier",
+       y = "Proportion of on Time and  Delayed Flights") +
+  scale_fill_discrete(name = "Arrival Status",
+                      labels = c("Not on Time", "On Time")) +
+  scale_x_discrete(labels = c("Endeavor Air",
+                              "Delta",
+                              "ExpressJet",
+                              "AirTran",
+                              "Envoy",
+                              "United",
+                              "Southwest"))
 ```
 
