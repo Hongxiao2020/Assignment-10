@@ -20,11 +20,12 @@ project <- read_csv(here("Data", "Johnson Elementary ELA Project.csv"),
                                   "Q2", 
                                   "Q3", 
                                   "Q4"),
+                    col_types = cols(Room = col_factor()),
                     skip = 4)
 # Tidy data
 new.project <- project %>%
     fill(Room) %>%
-  separate(Tardies_Absences, into = c("Tardies", "Absences"), convert = TRUE)
+  separate(Tardies_Absences, into = c("Tardies", "Absences"), sep = ";", convert = TRUE)
 
 new.project
 ```
@@ -40,7 +41,15 @@ new.project %>%
     tardies.sd = sd(Tardies, na.rm = TRUE),
     absence.sd = sd(Absences, na.rm = TRUE),
     tardies.median = median(Tardies, na.rm = TRUE),
-    absence.median = median(Absences, na.rm = TRUE))
+    absence.median = median(Absences, na.rm = TRUE),
+    tardies.IQR = IQR(Tardies, na.rm = TRUE),
+    absence.IQR = IQR(Absences, na.rm = TRUE),
+    tardies.mad = mad(Tardies, na.rm = TRUE),
+    absence.mad = mad(Absences, na.rm = TRUE),
+    tardies.min = min(Tardies, na.rm = TRUE),
+    absence.min = min(Absences, na.rm = TRUE),
+    tardies.max = max(Tardies, na.rm = TRUE),
+    absence.max = max(Absences, na.rm = TRUE))
 ```
 
 ***
